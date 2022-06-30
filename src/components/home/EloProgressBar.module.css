@@ -1,0 +1,72 @@
+.progressbarborder {
+    border-radius: 5px;
+    border: 1px solid rgb(26, 26, 26);
+    background: rgb(48, 45, 81);
+    width: calc(100%*0.95);
+    align-self: center;
+    height: 10px;
+    margin: 10px 0 0 0;
+    color: white;
+}
+
+.progressbarlevel {
+    border-radius: 5px;
+    background: linear-gradient(270deg, #10d9a5, #4f65bf);
+    background-size: 400% 400%;
+    -webkit-animation: ProgressBarColor 10s ease infinite;
+    -moz-animation: ProgressBarColor 10s ease infinite;
+    animation: ProgressBarColor 10s ease infinite;
+    border: 1px solid rgb(26, 26, 26);
+    height: 10px;
+}
+
+.progressbarborder g3 {
+    font-weight: lighter;
+}
+
+.progressbarborder span {
+    font-weight: bolder;
+    font-size: 1.1rem;
+}
+
+@-webkit-keyframes ProgressBarColor {
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+@-moz-keyframes ProgressBarColor {
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+@keyframes ProgressBarColor {
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
+}
