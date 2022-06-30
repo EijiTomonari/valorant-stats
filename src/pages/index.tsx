@@ -1,7 +1,6 @@
-import { Flex, Heading } from '@chakra-ui/react'
+import { Button, Flex, Heading } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import PlayerCard from '../components/home/playerCard'
 import styles from '../styles/Home.module.css'
 
@@ -16,20 +15,11 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <Heading position={'fixed'} top={'2rem'} color={'red.500'}>CUD | Valorant Stats</Heading>
-        <Flex flexDir={'row'}>
+        <Flex flexDir={'row'} w={'100%'} overflowX={'auto'} justifyContent={'center'}>
           <PlayerCard></PlayerCard>
         </Flex>
+        <Button mt={'2rem'}>View chart</Button>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://github.com/EijiTomonari/valorant-stats"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Developed by Eiji Tomonari
-        </a>
-      </footer>
     </div>
   )
 }
