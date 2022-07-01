@@ -1,6 +1,7 @@
 .container {
   padding: 0 2rem;
-  background: #0b0e13;
+  background: rgba(0, 0, 0, 0.9) url('/images/bgs/ascent.jpg');
+  background-blend-mode: darken;
 }
 
 .main {
