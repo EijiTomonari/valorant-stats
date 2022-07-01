@@ -5,7 +5,7 @@ import { Player } from '../../components/home/playerCard';
 import { db } from '../../util/firebase'
 
 type Data = {
-  name: string
+  message: string
 }
 
 type ValorantAPIResponse = {
@@ -30,7 +30,6 @@ const fetchPlayers = async () => {
     return data as Player[];
   } catch (err) {
     console.error(err);
-    alert("An error occured while fetching players");
     return [];
   }
 }
@@ -46,14 +45,17 @@ const fetchUpdatedData = (player: Player) => {
 }
 
 const sendDataToFirebase = async (response: ValorantAPIResponse, docref: string) => {
+  // Only proceed if the response is valid
   if (response.status != 200) {
     return;
   }
+  // Update the player's data
   const docRef = doc(db, 'players', docref);
   await setDoc(docRef, {
     currentMMR: response.data.ranking_in_tier,
     elo: response.data.currenttier - 2
   }, { merge: true }).then(() => console.log("Successfully updated player data"));
+  // Insert today's statistics into the player's history
   const today = new Date();
   const dateString = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear()
   const statDocRef = doc(db, `eloprogress/${docref}/data`, dateString);
@@ -71,9 +73,11 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   let players: Player[] = [];
+  // Fetch all players from the database
   players = await fetchPlayers();
+  // Fetch the data for each player and update the database
   players.forEach(player => {
     fetchUpdatedData(player);
   });
-  res.status(200).json({ name: 'John Doe' })
+  res.status(200).json({message: "Successfully updated players data"});
 }
