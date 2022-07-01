@@ -24,6 +24,13 @@ ChartJS.register(
 export const options = {
   responsive: true,
   plugins: {
+    tooltip: {
+      callbacks: {
+        afterBody: function (tooltipItem: any) {
+          return `Elo: ${tooltipItem[0].dataset.data[0].eloname}\nPDL: ${tooltipItem[0].dataset.data[0].pdl}`;
+        },
+      },
+    },
     legend: {
       position: "top" as const,
     },
@@ -36,22 +43,10 @@ export const options = {
 
 const labels = ["January", "February", "March", "April", "May", "June", "July"];
 
-export const data = {
-  datasets: [
-    {
-      label: "jos",
-      data: [
-        { x: 10, y: 20 },
-        { x: 15, y: 131 },
-        { x: 20, y: 10 },
-      ],
-      borderColor: "rgb(255, 99, 132)",
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-  ],
-};
-
-const LineChart = () => {
+const LineChart = ({ statistics }: { statistics: any }) => {
+  const data = {
+    datasets: statistics,
+  };
   return <Line options={options} data={data} />;
 };
 
