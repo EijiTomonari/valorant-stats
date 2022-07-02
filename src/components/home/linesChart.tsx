@@ -27,7 +27,9 @@ export const options = {
     tooltip: {
       callbacks: {
         afterBody: function (tooltipItem: any) {
-          return `Elo: ${tooltipItem[0].dataset.data[0].eloname}\nPDL: ${tooltipItem[0].dataset.data[0].pdl}`;
+          return `Elo: ${
+            tooltipItem[0].dataset.data[tooltipItem[0].dataIndex].eloname
+          }\nPDL: ${tooltipItem[0].dataset.data[tooltipItem[0].dataIndex].pdl}`;
         },
       },
     },

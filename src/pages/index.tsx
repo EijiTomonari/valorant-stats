@@ -42,7 +42,7 @@ const Home: NextPage = () => {
     setplayers([]);
     setplayersstatistics([]);
     try {
-      fetch("/api/fetchdata");
+      fetch("/api/updatedata");
     } catch (err) {
       console.error(err);
     }
@@ -57,6 +57,7 @@ const Home: NextPage = () => {
       label: player.name,
       data: [],
       backgroundColor: `#${randomColor}`,
+      borderColor: `#${randomColor}`,
     };
     // Fetch the player statistics from firebase
     const q = query(
