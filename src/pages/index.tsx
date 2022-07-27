@@ -14,26 +14,35 @@ import PlayerCard, { Player } from "../components/home/playerCard";
 import styles from "../styles/Home.module.css";
 import { db } from "../util/firebase";
 import { BiRefresh } from "react-icons/bi";
+import { fetchPlayers, fetchPlayerStatistics } from "../util/databaseServices";
 
 const Home: NextPage = () => {
   const [loadingplayers, setloadingplayers] = useState<boolean>(false);
-  const [loadingstatistics, setloadingstatistics] = useState<boolean>(false);
+  const [loadingstatistics, setloadingstatistics] = useState<boolean>(true);
   const [players, setplayers] = useState<Player[]>([]);
   const [playersstatistics, setplayersstatistics] = useState<any>([]);
 
-  const fetchPlayers = async () => {
+  const fetchPlayersData = async () => {
     setloadingplayers(true);
-    setloadingstatistics(true);
     try {
-      const q = query(collection(db, "players"));
-      const doc = await getDocs(q);
-      const data = doc.docs.map((d) => d.data());
-      setplayers(data as Player[]);
-      setloadingplayers(false);
-    } catch (err) {
-      console.error(err);
+      const players = await fetchPlayers();
+      setplayers(players as Player[]);
+    } catch (error) {
       alert("An error occured while fetching players");
     }
+    setloadingplayers(false);
+  };
+
+  const fetchStatisticsData = async (player: Player) => {
+    setloadingstatistics(true);
+    try {
+      const playerStatistics = await fetchPlayerStatistics(player);
+      setplayersstatistics((prev: any) => [...prev, playerStatistics]);
+    } catch (error) {
+      console.error(error);
+      alert("An error occured while fetching player statistics " + player.name);
+    }
+    setloadingstatistics(false);
   };
 
   const updatePlayersData = async () => {
@@ -42,40 +51,12 @@ const Home: NextPage = () => {
     setplayers([]);
     setplayersstatistics([]);
     try {
-      fetch("/api/updatedata");
+      await fetch("/api/updatedata");
     } catch (err) {
       console.error(err);
+      alert("An error occured while updating data " + err);
     }
-    fetchPlayers();
-  };
-
-  const fetchPlayerStatistics = async (player: Player) => {
-    // Generate a random color code
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-    // Create an empty object to store the player statistics
-    let playerStatistics: any = {
-      label: player.name,
-      data: [],
-      backgroundColor: `#${randomColor}`,
-      borderColor: `#${randomColor}`,
-    };
-    // Fetch the player statistics from firebase
-    const q = query(
-      collection(db, `eloprogress/${player.docref}/data`),
-      orderBy("timestamp", "asc")
-    );
-    const querySnapshot = await getDocs(q);
-    // Transform each document into an data point object
-    querySnapshot.forEach((doc) => {
-      const x = doc.data().timestamp.toDate().toLocaleDateString("pt-BR");
-      const y = doc.data().MMR;
-      const eloname = doc.data().eloname;
-      const pdl = doc.data().pdl;
-      playerStatistics.data.push({ x: x, y: y, eloname: eloname, pdl: pdl });
-    });
-    // Add the player statistics to the state
-    setplayersstatistics((prev: any) => [...prev, playerStatistics]);
-    setloadingstatistics(false);
+    fetchPlayersData();
   };
 
   useEffect(() => {
@@ -83,7 +64,7 @@ const Home: NextPage = () => {
     try {
       let statistics = [];
       players.forEach((player) => {
-        fetchPlayerStatistics(player);
+        fetchStatisticsData(player);
       });
     } catch (error) {
       console.error(error);
@@ -92,10 +73,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (loadingplayers) return;
-    fetchPlayers();
+    fetchPlayersData();
   }, []);
 
-  console.log(playersstatistics);
   return (
     <div className={styles.container}>
       <Head>
