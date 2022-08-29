@@ -35,7 +35,11 @@ const fetchPlayerStatistics = async (player: Player) => {
   const querySnapshot = await getDocs(q);
   // Transform each document into an data point object
   querySnapshot.forEach((doc) => {
-    const x = doc.data().timestamp.toDate().toLocaleDateString("pt-BR");
+    const x = doc
+      .data()
+      .timestamp.toDate()
+      .toLocaleDateString("pt-BR")
+      .slice(0, 5);
     const y = doc.data().MMR;
     const eloname = doc.data().eloname;
     const pdl = doc.data().pdl;

@@ -62,7 +62,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     setloadingstatistics(true);
     try {
-      let statistics = [];
       players.forEach((player) => {
         fetchStatisticsData(player);
       });
