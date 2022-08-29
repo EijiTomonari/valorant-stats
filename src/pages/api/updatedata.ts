@@ -65,9 +65,10 @@ const sendDataToFirebase = async (
     { merge: true }
   )
     .then(() => console.log("Successfully updated player data " + docref))
-    .catch((e) =>
-      console.error("There was an error updating player data " + docref)
-    );
+    .catch((e) => {
+      console.error("There was an error updating player data " + docref);
+      return false;
+    });
   // Insert today's statistics into the player's history
   const today = new Date();
   const dateString =
@@ -85,24 +86,34 @@ const sendDataToFirebase = async (
     { merge: true }
   )
     .then(() => console.log("Successfully updated player statistics " + docref))
-    .catch((e) =>
-      console.error("There was an error updating player statistics " + docref)
-    );
+    .catch((e) => {
+      console.error("There was an error updating player statistics " + docref);
+      return false;
+    });
+  return true;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   let players: Player[] = [];
   // Fetch all players from the database
   players = await fetchPlayers();
+  let success = true;
   // Fetch the data for each player and update the database
-  players.forEach(async (player, index) => {
+  for (let index = 0; index < players.length; index++) {
+    const player = players[index];
     const response = await fetchUpdatedData(player);
-    const firebaseResponse = await sendDataToFirebase(response, player.docref);
-    if (index == players.length - 1) {
-      res.status(200).json({ message: "Successfully updated players data" });
+    const status = await sendDataToFirebase(response, player.docref);
+    if (!status) {
+      success = false;
     }
-  });
-}
+  }
+  if (success) {
+    res.status(200).json({ message: "Successfully updated all player data" });
+  } else {
+    res
+      .status(500)
+      .json({ message: "There was an error updating player data" });
+  }
+};
+
+export default handler;
